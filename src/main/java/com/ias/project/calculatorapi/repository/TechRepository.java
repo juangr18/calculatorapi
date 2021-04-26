@@ -1,6 +1,7 @@
 package com.ias.project.calculatorapi.repository;
 
 import com.ias.project.calculatorapi.domain.Tech;
+import com.ias.project.calculatorapi.domain.TechHour;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -56,22 +57,35 @@ public class TechRepository{
         String idService = resultSet.getString("idService");
         LocalDateTime horaInicio = resultSet.getTimestamp("horaInicio").toLocalDateTime();
         LocalDateTime horaFinal = resultSet.getTimestamp("horaFinal").toLocalDateTime();
-        int hour = resultSet.getInt("horas");
         UUID id = UUID.fromString(idString);
         return new Tech(id, idTech, idService, horaInicio, horaFinal);
     }
-    
-    public List<Tech> findTechByIdTechAndWeek(String id, String week){
-        String sql="SELECT * FROM tech WHERE idTech=? AND (WEEK(horaInicio)=? AND WEEK(horaFinal)=?)";
+
+    private TechHour getTechFromResultsetComplete(ResultSet resultSet) throws SQLException {
+        String idString = resultSet.getString("id");
+        String idTech = resultSet.getString("idTech");
+        String idService = resultSet.getString("idService");
+        LocalDateTime horaInicio = resultSet.getTimestamp("horaInicio").toLocalDateTime();
+        LocalDateTime horaFinal = resultSet.getTimestamp("horaFinal").toLocalDateTime();
+        UUID id = UUID.fromString(idString);
+        int horas=resultSet.getInt("horas");
+//        int nocturnas=resultSet.getInt("nocturnas");
+//        int dominicales=resultSet.getInt("dominicales");
+//        return new TechHour(id, idTech, idService, horaInicio, horaFinal,horas,nocturnas,dominicales);
+        return new TechHour(id, idTech, idService, horaInicio, horaFinal,horas);
+    }
+
+    public List<TechHour> findTechByIdTechAndWeek(String id, String week){
+        String sql="SELECT *,DATEDIFF(hour,horaInicio,horaFinal) AS horas FROM tech WHERE idTech=? AND WEEK(horaInicio)=? AND WEEK(horaFinal)=?";
         try(Connection connection = dataSource.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1,id);
             preparedStatement.setString(2, week);
             preparedStatement.setString(3, week);
             ResultSet resultSet = preparedStatement.executeQuery();
-            List<Tech> teches = new ArrayList<>();
+            List<TechHour> teches = new ArrayList<>();
             while(resultSet.next()){
-                Tech techFilter = getTechFromResultset(resultSet);
+                TechHour techFilter = getTechFromResultsetComplete(resultSet);
                 teches.add(techFilter);
             }
             return teches;

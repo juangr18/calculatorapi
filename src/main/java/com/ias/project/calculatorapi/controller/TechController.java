@@ -2,6 +2,7 @@ package com.ias.project.calculatorapi.controller;
 
 
 import com.ias.project.calculatorapi.domain.Tech;
+import com.ias.project.calculatorapi.domain.TechHour;
 import com.ias.project.calculatorapi.model.*;
 import com.ias.project.calculatorapi.repository.TechRepository;
 import com.ias.project.calculatorapi.service.TechService;
@@ -40,7 +41,7 @@ public class TechController {
     }
 
     @GetMapping("/list/{id}/{week}")
-    public List<Tech> listFilterByIdAndWeek(@PathVariable String id, @PathVariable String week){
+    public List<TechHour> listFilterByIdAndWeek(@PathVariable String id, @PathVariable String week){
         return service.listTechFilterByIdAndWeek(id,week);
     }
 

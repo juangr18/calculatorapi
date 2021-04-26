@@ -1,6 +1,7 @@
 package com.ias.project.calculatorapi.service;
 
 import com.ias.project.calculatorapi.domain.Tech;
+import com.ias.project.calculatorapi.domain.TechHour;
 import com.ias.project.calculatorapi.model.*;
 import com.ias.project.calculatorapi.repository.TechRepository;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class TechService {
         return repository.listTech();
     }
 
-    public List<Tech> listTechFilterByIdAndWeek(String id, String week) {
+    public List<TechHour> listTechFilterByIdAndWeek(String id, String week) {
         return repository.findTechByIdTechAndWeek(id, week);
     }
 
